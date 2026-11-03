@@ -26,7 +26,7 @@ from scipy.optimize import least_squares
 
 # Se reutiliza la funcion completada en el script de la catedra (ejercicio 3b),
 # de modo que lo que se verifica aqui es exactamente lo que usara el NLS.
-from script_identificacion import calcular_velocidad, DT, VENTANA_S, DUTY_REFERENCIA, DURACION_CICLO_S
+from consigna.script_identificacion import calcular_velocidad, DT, VENTANA_S, DUTY_REFERENCIA, DURACION_CICLO_S
 
 
 # ---------------------------------------------------------------------------
