@@ -67,8 +67,18 @@ def calcular_velocidad(parametros, duty, velocidad_inicial):
 # Se agrega la muestra actual y se retira la que salio de la ventana.
 # Al comienzo sólo se usan las muestras que entren en la ventana de tamaño creciente.
 def promedio_movil(velocidad):
-    # Completar promedio_movil segun el enunciado.
-    raise NotImplementedError('Completar promedio_movil.')
+    # Ejercicio 4: promedio de las ultimas N muestras, incluyendo la actual.
+    # Se lleva una suma de la ventana: entra la muestra k y sale la muestra k-N.
+    # Mientras haya menos de N muestras, se divide por las que hay (k+1).
+    velocidad = np.asarray(velocidad, dtype=float)
+    promedio = np.zeros(len(velocidad))
+    suma = 0.0
+    for k in range(len(velocidad)):
+        suma = suma + velocidad[k]              # entra la muestra actual
+        if k >= N:
+            suma = suma - velocidad[k - N]      # sale la que quedo fuera de la ventana
+        promedio[k] = suma / min(k + 1, N)
+    return promedio
 
 
 
@@ -189,10 +199,12 @@ if __name__ == '__main__':
         medida = velocidad_medida[inicio:fin]
         modelo = calculada_ma[inicio:fin]
         error  = medida - modelo
-        rmse   = None   # Completar el calculo del RMSE.
-        sesgo  = None   # Completar el calculo del sesgo.
+        rmse   = np.sqrt(np.mean(error**2))     # Raiz del error cuadratico medio
+        sesgo  = np.mean(error)                 # Promedio del error
         error_maximo  = np.max(np.abs(error))
-        fit    = None   # Completar el ajuste porcentual en caso de que esté definido.
+        # Ajuste porcentual: solo esta definido si la velocidad medida no es constante.
+        variacion = np.sqrt(np.sum((medida - np.mean(medida))**2))
+        fit    = 100 * (1 - np.sqrt(np.sum(error**2)) / variacion) if variacion > 0 else None
         if rmse is None or sesgo is None:
             raise NotImplementedError('Completar RMSE, sesgo y ajuste porcentual.')
         indicadores[nombre] = dict(RMSE_rad_s=float(rmse), bias_rad_s=float(sesgo),
