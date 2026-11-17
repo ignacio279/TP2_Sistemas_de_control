@@ -44,11 +44,16 @@ for nombre, inicio, fin in tramos:
     wm = velocidad_medida[inicio:fin]
     rmse = np.sqrt(np.mean(e**2))
     sesgo = np.mean(e)
-    fit = 100 * (1 - np.sqrt(np.sum(e**2)) / np.sqrt(np.sum((wm - np.mean(wm))**2)))
+    # El FIT solo esta definido si la velocidad medida no es constante
+    variacion = np.sqrt(np.sum((wm - np.mean(wm))**2))
+    fit = 100 * (1 - np.sqrt(np.sum(e**2)) / variacion) if variacion > 0 else None
     print(f"\n{nombre} ({tiempo[inicio]:.0f} s a {tiempo[fin - 1] + DT:.0f} s, {fin - inicio} muestras)")
     print(f"  RMSE  = {rmse:.3f} rad/s")
     print(f"  Sesgo = {sesgo:.3f} rad/s")
-    print(f"  FIT   = {fit:.2f} %")
+    if fit is not None:
+        print(f"  FIT   = {fit:.2f} %")
+    else:
+        print("  FIT   = no definido (velocidad medida constante)")
     print(f"  Error maximo = {np.max(np.abs(e)):.3f} rad/s")
 
 os.makedirs(os.path.join(carpeta, 'resultados', '6'), exist_ok=True)

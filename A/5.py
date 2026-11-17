@@ -42,6 +42,10 @@ resultado = least_squares(residuos, parametros_iniciales,
                           x_scale='jac', max_nfev=150)
 print("Convergio:", resultado.success, "-", resultado.message)
 
+# Si el ajuste no converge se detiene el programa y no se guardan parametros
+if not resultado.success:
+    raise RuntimeError('NLS no convergio: ' + resultado.message)
+
 Kdc, omega_ref, p = resultado.x
 b = p * Kdc
 c = p * (omega_ref - Kdc * DUTY_REFERENCIA)
