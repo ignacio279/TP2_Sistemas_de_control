@@ -1,7 +1,6 @@
 # Parte B - Ejercicio 1: representacion del sistema y controlabilidad
 # Se necesita tener ejecutado A/5.py primero !!
 # La deduccion de las matrices y el rango se desarrollan en el informe!
-# Este script solo evalua las matrices con los parametros identificados
 import os
 import numpy as np
 import control as ctrl
