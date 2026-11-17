@@ -1,10 +1,11 @@
 {
   "w_equilibrio_analitico": 35.99999999999998,
-  "w_euler_final": 35.99999936176017,
-  "error_final": -6.382398112236842e-07,
+  "t_final_s": 2.0,
+  "w_euler_final": 35.999999366866085,
+  "error_final": -6.331338937570763e-07,
   "max_error_euler_vs_exacta": 0.008858655196377185,
   "tau_s": 0.125,
-  "t_98_s": 0.5,
+  "t_establecimiento_aprox_s": 0.5,
   "factor_euler": 0.992,
   "factor_exacto": 0.9920319148370607
 }

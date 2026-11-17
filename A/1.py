@@ -13,7 +13,8 @@ CARPETA_RESULTADOS = Path(__file__).resolve().parent / 'resultados'
 
 # La configuración se toma del archivo de la cátedra, sin duplicarla
 sys.path.insert(0, str(RAIZ / 'consigna'))
-from script_identificacion import (DT, VENTANA_S, DUTY_REFERENCIA, DURACION_CICLO_S, CICLOS_AJUSTE)
+from script_identificacion import (DT, VENTANA_S, DUTY_REFERENCIA, DURACION_CICLO_S, CICLOS_AJUSTE,
+                                  promedio_movil)
 
 plt.rcParams.update({'font.size': 9, 'axes.grid': True, 'grid.alpha': 0.35,
                      'savefig.dpi': 200, 'savefig.bbox': 'tight',
@@ -50,16 +51,6 @@ def guardar(fig, carpeta, nombre):
 N_VENTANA = int(round(VENTANA_S / DT))
 TIEMPO_REGIMEN_S = 1.0
 VENTANA_ESCALON_S = 1.5
-
-def promedio_movil_causal(x, n=N_VENTANA):
-    """Promedio movil causal de n muestras con ventana creciente al inicio.
-    Se usa SOLO para construir la respuesta de referencia de primer orden del
-    ejercicio 1b (la version de la catedra se completa en el ejercicio 4)."""
-    acumulada = np.cumsum(np.insert(x, 0, 0.0))
-    k = np.arange(1, len(x) + 1)
-    inicio = np.maximum(k - n, 0)
-    return (acumulada[k] - acumulada[inicio]) / (k - inicio)
-
 
 def detectar_tramos(duty):
     """Devuelve los indices [inicio, fin) de cada tramo de duty constante."""
@@ -112,6 +103,7 @@ def ejercicio_1(tiempo, duty, velocidad, carpeta_fig):
     ciclo = np.arange(len(tramos)) // 6 + 1
 
     # (b)Respuesta a los escalones. Para cada cambio de duty se normaliza la velocidad entre el regimen anterior y el nuevo: y = (w - w0)/(w1 - w0). Despues ajuste una constante de tiempo tau de un primer orden, pasado por el MISMO promedio movil de 0.1 s que tienen los datos.
+    # El ajuste usa least_squares (NLS) como en el ejemplo de T10 (K(1-e^{-t/tau})). Es un complemento: la consigna solo pide observar el transitorio y mostrar un detalle.
     n_esc = int(round(VENTANA_ESCALON_S / DT))
     t_rel = np.arange(-N_VENTANA, n_esc) * DT     
     normalizadas, taus, t63s, subida = [], [], [], []
@@ -124,7 +116,7 @@ def ejercicio_1(tiempo, duty, velocidad, carpeta_fig):
 
         def residuo_tau(x, y=y):
             escalon = np.where(t_rel >= 0, 1 - np.exp(-np.maximum(t_rel, 0) / x[0]), 0.0)
-            return promedio_movil_causal(escalon)[N_VENTANA:] - y
+            return promedio_movil(escalon)[N_VENTANA:] - y
         taus.append(least_squares(residuo_tau, [0.1], bounds=([0.005], [2.0])).x[0])
         subida.append(w1 > w0)
     normalizadas, taus, t63s, subida = map(np.array, (normalizadas, taus, t63s, subida))
@@ -134,17 +126,6 @@ def ejercicio_1(tiempo, duty, velocidad, carpeta_fig):
         tau_mediana_s=tau_med, tau_media_s=float(taus.mean()), tau_desvio_s=float(taus.std()),
         tau_subida_media_s=float(taus[subida].mean()), tau_bajada_media_s=float(taus[~subida].mean()),
         p_preliminar_1_s=float(1 / tau_med))
-
-    # frecuencia dominante frente a la frecuencia de giro.
-    rizado = []
-    for i, f in tramos[6:12]:
-        s = velocidad[i + 1000:f]
-        espectro = np.abs(np.fft.rfft((s - s.mean()) * np.hanning(len(s))))
-        frec = np.fft.rfftfreq(len(s), DT)
-        mascara = (frec > 0.5) & (frec < 30)
-        rizado.append(dict(w_media=float(s.mean()), f_rizado_Hz=float(frec[mascara][np.argmax(espectro[mascara])]),
-                           f_giro_Hz=float(s.mean() / (2 * np.pi)), pico_a_pico=float(np.ptp(s))))
-    resultados['rizado'] = rizado
 
     # Figura del detalle de un escalon (0.651 -> 0.702, t = 42 s, ciclo 2).
     j = 7
@@ -158,7 +139,7 @@ def ejercicio_1(tiempo, duty, velocidad, carpeta_fig):
     ejes[0].plot(t_fino, velocidad[s], lw=0.9, label='medida (con MA)')
     ejes[0].plot(t_fino, w0 + (w1 - w0) * primer_orden, 'k:', lw=1.0,
                  label=fr'1er orden, $\tau$={tau_med*1e3:.0f} ms')
-    ejes[0].plot(t_fino, w0 + (w1 - w0) * promedio_movil_causal(primer_orden), 'C3--', lw=1.0,
+    ejes[0].plot(t_fino, w0 + (w1 - w0) * promedio_movil(primer_orden), 'C3--', lw=1.0,
                  label='1er orden + MA 0.1 s')
     ejes[0].axhline(w0 + (w1 - w0) * (1 - np.exp(-1)), color='gray', lw=0.6, ls='-.')
     ejes[0].set_xlabel(r'$t - t_{esc}$ [s]')
@@ -168,7 +149,7 @@ def ejercicio_1(tiempo, duty, velocidad, carpeta_fig):
     t_n = np.arange(n_esc) * DT
     for y, sube in zip(normalizadas, subida):
         ejes[1].plot(t_n, y, lw=0.3, color='C0' if sube else 'C1', alpha=0.5)
-    ejes[1].plot(t_n, promedio_movil_causal(np.concatenate((np.zeros(N_VENTANA), 1 - np.exp(-t_n / tau_med))))[N_VENTANA:],
+    ejes[1].plot(t_n, promedio_movil(np.concatenate((np.zeros(N_VENTANA), 1 - np.exp(-t_n / tau_med))))[N_VENTANA:],
                  'k--', lw=1.2, label='1er orden + MA')
     ejes[1].plot([], [], color='C0', label='subidas'); ejes[1].plot([], [], color='C1', label='bajadas')
     ejes[1].set_xlim(0, 1.0)
@@ -179,8 +160,11 @@ def ejercicio_1(tiempo, duty, velocidad, carpeta_fig):
     fig.tight_layout()
     guardar(fig, carpeta_fig, 'fig_A1b_detalle_escalon')
 
-    # (c)Recta de minimos cuadrados omega_ss = m*d + q.
-    m, q = np.polyfit(d_tramo, w_ss, 1)
+    # (c)Recta de minimos cuadrados omega_ss = m*d + q (LS, T10 Identificacion de Sistemas):
+    #   Y = Phi theta + e, con Y = omega_ss, Phi = [d 1], theta = [m q]^T
+    #   theta = (Phi^T Phi)^-1 Phi^T Y  (ecuaciones normales; se resuelve el sistema en vez de invertir)
+    Phi = np.column_stack((d_tramo, np.ones_like(d_tramo)))
+    m, q = np.linalg.solve(Phi.T @ Phi, Phi.T @ w_ss)
     residuos = w_ss - (m * d_tramo + q)
     r2 = 1 - np.sum(residuos**2) / np.sum((w_ss - w_ss.mean())**2)
     por_nivel = []

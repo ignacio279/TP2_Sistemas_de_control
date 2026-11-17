@@ -45,7 +45,8 @@ def guardar(fig, carpeta, nombre):
 def ejercicio_3(carpeta_fig):
     Kdc, omega_ref, p = 240.0, 30.0, 8.0         
     d_cte, w0, duracion = 0.70, 30.0, 2.0
-    n = int(round(duracion / DT))
+    # n + 1 muestras para que el vector de tiempo incluya t = 2.000 s (k = 0 ... 2000)
+    n = int(round(duracion / DT)) + 1
     t = np.arange(n) * DT
     duty = np.full(n, d_cte)
     w_euler = calcular_velocidad([Kdc, omega_ref, p], duty, w0)
@@ -55,10 +56,13 @@ def ejercicio_3(carpeta_fig):
     # Solucion exacta de la EDO lineal de primer orden con entrada constante!
     w_exacta = w_eq + (w0 - w_eq) * np.exp(-p * t)
 
-    resultados = dict(w_equilibrio_analitico=w_eq, w_euler_final=float(w_euler[-1]),
+    resultados = dict(w_equilibrio_analitico=w_eq, t_final_s=float(t[-1]), w_euler_final=float(w_euler[-1]),
                       error_final=float(w_euler[-1] - w_eq),
                       max_error_euler_vs_exacta=float(np.max(np.abs(w_euler - w_exacta))),
-                      tau_s=1 / p, t_98_s=4 / p,
+                      tau_s=1 / p,
+                      # 4/p = 0.5 s es la aproximacion usual del tiempo de establecimiento (4 tau,
+                      # 1 - e^-4 = 98.2 %). El 98 % exacto es ln(50)/p = 0.489 s; A3 no lo exige.
+                      t_establecimiento_aprox_s=4 / p,
                       factor_euler=1 - p * DT, factor_exacto=float(np.exp(-p * DT)))
 
     fig, ejes = plt.subplots(2, 1, figsize=(3.5, 3.9), sharex=True,
