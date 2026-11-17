@@ -1,5 +1,5 @@
 # Parte A, ejercicio 3: Euler hacia adelante y su verificación.
-# A3(a-b): se completó calcular_velocidad en consigna/script_identificacion.py. Aca se importa esa función y se realiza únicamente la verificación de A3(c).
+# Aca usamos calcular_velocidad que completamos en consigna/script_identificacion.py
 from pathlib import Path
 import sys
 import json
@@ -8,12 +8,14 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
+# Como en A1, agregamos extras usando las formulas que vimos en clase
+
+
 RAIZ = Path(__file__).resolve().parent.parent
 CARPETA_RESULTADOS = Path(__file__).resolve().parent / 'resultados'
 
 # La configuracion se toma del archivo de la catedra, sin duplicarla
 sys.path.insert(0, str(RAIZ / 'consigna'))
-# A3(a-b) se completo ahi, aca se importa Euler para verificar A3(c)
 from script_identificacion import (calcular_velocidad, DT, DUTY_REFERENCIA)
 
 plt.rcParams.update({'font.size': 9, 'axes.grid': True, 'grid.alpha': 0.35,
@@ -53,16 +55,17 @@ def ejercicio_3(carpeta_fig):
 
     # Equilibrio analitico: w* = w_ref + Kdc (d - d_ref)
     w_eq = omega_ref + Kdc * (d_cte - DUTY_REFERENCIA)
-    # Solucion exacta de la EDO lineal de primer orden con entrada constante!
+    # Usamos la exponencial de T5 slide 6, adaptada a w0 y w_eq, para comparar con Euler
     w_exacta = w_eq + (w0 - w_eq) * np.exp(-p * t)
 
+    # Tambien guardamos la mayor diferencia entre las curvas para comparar
     resultados = dict(w_equilibrio_analitico=w_eq, t_final_s=float(t[-1]), w_euler_final=float(w_euler[-1]),
                       error_final=float(w_euler[-1] - w_eq),
                       max_error_euler_vs_exacta=float(np.max(np.abs(w_euler - w_exacta))),
                       tau_s=1 / p,
-                      # 4/p = 0.5 s es la aproximacion usual del tiempo de establecimiento (4 tau,
-                      # 1 - e^-4 = 98.2 %). El 98 % exacto es ln(50)/p = 0.489 s; A3 no lo exige.
+                      # De T5 slide 6 usamos 4*tau = 4/p para aprox el establecimiento
                       t_establecimiento_aprox_s=4 / p,
+                      # Vemos cuanto decae en un paso con Euler y con la exponencial
                       factor_euler=1 - p * DT, factor_exacto=float(np.exp(-p * DT)))
 
     fig, ejes = plt.subplots(2, 1, figsize=(3.5, 3.9), sharex=True,

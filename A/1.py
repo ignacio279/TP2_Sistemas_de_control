@@ -8,6 +8,9 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from scipy.optimize import least_squares
 
+# Agregamos algunos extras de lo que vimos en clase
+# abajo dejamos las slides que usamos para las formulas y el ajuste
+
 RAIZ = Path(__file__).resolve().parent.parent
 CARPETA_RESULTADOS = Path(__file__).resolve().parent / 'resultados'
 
@@ -102,8 +105,8 @@ def ejercicio_1(tiempo, duty, velocidad, carpeta_fig):
     w_ss = np.array([velocidad[f - n_reg:f].mean() for i, f in tramos])
     ciclo = np.arange(len(tramos)) // 6 + 1
 
-    # (b)Respuesta a los escalones. Para cada cambio de duty se normaliza la velocidad entre el regimen anterior y el nuevo: y = (w - w0)/(w1 - w0). Despues ajuste una constante de tiempo tau de un primer orden, pasado por el MISMO promedio movil de 0.1 s que tienen los datos.
-    # El ajuste usa least_squares (NLS) como en el ejemplo de T10 (K(1-e^{-t/tau})). Es un complemento: la consigna solo pide observar el transitorio y mostrar un detalle.
+    # (b)Probamos comparar las tau usando la exponencial y el ajuste de T10, slides 16-17
+    # normalizamos para ajustar solo tau y al modelo le ponemos el promedio movil del TP
     n_esc = int(round(VENTANA_ESCALON_S / DT))
     t_rel = np.arange(-N_VENTANA, n_esc) * DT     
     normalizadas, taus, t63s, subida = [], [], [], []
@@ -112,6 +115,7 @@ def ejercicio_1(tiempo, duty, velocidad, carpeta_fig):
         w0, w1 = w_ss[j - 1], w_ss[j]
         y = (velocidad[k0:k0 + n_esc] - w0) / (w1 - w0)
         normalizadas.append(y)
+        # En T5 slide 6 vimos que el 63.2 % se alcanza en tau, aca el filtro agrega retardo
         t63s.append(np.argmax(y >= 1 - np.exp(-1)) * DT)
 
         def residuo_tau(x, y=y):
@@ -120,6 +124,7 @@ def ejercicio_1(tiempo, duty, velocidad, carpeta_fig):
         taus.append(least_squares(residuo_tau, [0.1], bounds=([0.005], [2.0])).x[0])
         subida.append(w1 > w0)
     normalizadas, taus, t63s, subida = map(np.array, (normalizadas, taus, t63s, subida))
+    # Comparamos subidas y bajadas, usamos la mediana para que pesen menos los extremos
     tau_med = float(np.median(taus))
     resultados['escalones'] = dict(
         t63_crudo_media_s=float(t63s.mean()),
@@ -160,13 +165,13 @@ def ejercicio_1(tiempo, duty, velocidad, carpeta_fig):
     fig.tight_layout()
     guardar(fig, carpeta_fig, 'fig_A1b_detalle_escalon')
 
-    # (c)Recta de minimos cuadrados omega_ss = m*d + q (LS, T10 Identificacion de Sistemas):
-    #   Y = Phi theta + e, con Y = omega_ss, Phi = [d 1], theta = [m q]^T
-    #   theta = (Phi^T Phi)^-1 Phi^T Y  (ecuaciones normales; se resuelve el sistema en vez de invertir)
+    # (c)Aca pasamos a Python las ecuaciones de minimos cuadrados de T10 slide 8
     Phi = np.column_stack((d_tramo, np.ones_like(d_tramo)))
     m, q = np.linalg.solve(Phi.T @ Phi, Phi.T @ w_ss)
     residuos = w_ss - (m * d_tramo + q)
+    # Tambien miramos R2 para ver como queda el ajuste, no es el FIT de A6
     r2 = 1 - np.sum(residuos**2) / np.sum((w_ss - w_ss.mean())**2)
+    # Vemos si al repetir la entrada da una velocidad parecida
     por_nivel = []
     for nivel in np.unique(np.round(d_tramo, 6)):
         sel = np.isclose(d_tramo, nivel)
@@ -175,9 +180,11 @@ def ejercicio_1(tiempo, duty, velocidad, carpeta_fig):
                               residuo_medio=float(residuos[sel].mean())))
     medias = np.array([p['w_ss_media'] for p in por_nivel])
     duties = np.array([p['duty'] for p in por_nivel])
+    # Pendientes entre niveles para comparar con la m de la recta
     pendientes_locales = np.diff(medias) / np.diff(duties)
-    # Deriva lenta: velocidad media de regimen de cada ciclo.
+    # Medias por ciclo para ver si la velocidad va cambiando durante el ensayo
     deriva = [float(w_ss[ciclo == c].mean()) for c in range(1, 11)]
+    # Ojo que el corte -q/m queda fuera de lo medido, es una extrapolacion
     resultados['recta'] = dict(m=float(m), q=float(q), R2=float(r2),
                                rmse=float(np.sqrt(np.mean(residuos**2))),
                                max_abs_residuo=float(np.max(np.abs(residuos))),
