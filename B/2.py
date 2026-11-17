@@ -1,8 +1,6 @@
-# Parte B - Ejercicio 2: respuesta lenta.
-# Ejecutar A/5.py primero. Luego: python B/2.py
-# El inciso (d), tiempo de establecimiento y maximo del control, se desarrolla
-# analiticamente en el informe
-# Se guardan las curvas y sus datos para realizar ese analisis en el informe
+# Parte B - Ejercicio 2: respuesta lenta
+# Se debe tener ejecutado A/5.py primero para tener los parametros identificados
+# El inciso (d) de tiempo de establecimiento y maximo del control, se desarrolla analiticamente en el informe
 import os
 import numpy as np
 import control as ctrl
@@ -29,17 +27,15 @@ print('KL =', KL)
 print('Polos solicitados =', new_poles)
 print('Polos de A-B@KL =', poles_cl)
 
-# La referencia es cero: se simula REGULACION desde una desviacion inicial
+# La referencia es cero, se simula REGULACION desde una desviacion inicial
 theta0 = 5 * np.pi / 180
 z0 = np.array([theta0, 0.0])
 t0 = 0.0
 tf = 20.0
 t_eval = np.linspace(t0, tf, 20001)
 
-
 def closed_loop_error_system(t, z):
     return A_cl @ z
-
 
 sol = solve_ivp(closed_loop_error_system, [t0, tf],
                 z0, t_eval=t_eval, rtol=1e-9, atol=1e-9)
@@ -50,7 +46,7 @@ omega = z[1, :]
 u = -KL @ z
 u = u[0, :]
 
-# (d) El calculo de ts y del maximo absoluto del control figura en el informe!
+# (d)El calculo de ts y del maximo absoluto del control figura en el informe!
 
 os.makedirs(os.path.join(carpeta, 'resultados', '2'), exist_ok=True)
 np.savetxt(os.path.join(carpeta, 'resultados', '2', 'KL.txt'), KL,
@@ -60,7 +56,6 @@ np.savetxt(os.path.join(carpeta, 'resultados', '2', 'respuesta_L.txt'),
            np.array([t, theta, omega, u]).T,
            header='t [s], Delta(theta) [rad], Delta(omega) [rad/s], Delta(d) [duty]')
 
-# Graficos: Guia 9, pp. 2 y 5. Solo se convierte theta a grados al graficar
 plt.figure(figsize=(6.5, 4.2))
 plt.plot(t, theta * 180 / np.pi, 'b-', linewidth=2, label='Lento: -0.5, -1')
 plt.axhline(0.1, color='r', linestyle='--', label='Banda: +/-0.1 grados')

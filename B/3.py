@@ -1,5 +1,5 @@
-# Parte B - Ejercicio 3: respuesta rapida y comparacion con la lenta.
-# Ejecutar A/5.py primero. Luego: python B/3.py
+# Parte B - Ejercicio 3: respuesta rapida y comparacion con la lenta
+# Tener el punto 5 de A ya ejecutado!
 # Las metricas de (b) y la comparacion de (d) se desarrollan en el informe!
 import os
 import numpy as np
@@ -38,14 +38,11 @@ t0 = 0.0
 tf = 20.0
 t_eval = np.linspace(t0, tf, 20001)
 
-
 def closed_loop_R(t, z):
     return A_cl_R @ z
 
-
 def closed_loop_L(t, z):
     return A_cl_L @ z
-
 
 sol_R = solve_ivp(closed_loop_R, [t0, tf],
                   z0, t_eval=t_eval, rtol=1e-9, atol=1e-9)
@@ -63,9 +60,6 @@ u_R = -KR @ z_R
 u_R = u_R[0, :]
 u_L = -KL @ z_L
 u_L = u_L[0, :]
-
-# Las metricas de (b) se calculan analiticamente en el informe!
-# Los graficos de (c) permiten comparar las respuestas en (d)
 
 os.makedirs(os.path.join(carpeta, 'resultados', '3'), exist_ok=True)
 np.savetxt(os.path.join(carpeta, 'resultados', '3', 'KR.txt'), KR,

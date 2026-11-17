@@ -1,8 +1,4 @@
-"""Parte A, ejercicio 1: datos experimentales, transitorios y recta de régimen.
-Los gráficos y análisis de A1 son externos al script de identificación y quedan aquí.
-Ejecutar desde la raíz del repo: python A/1.py [datos_motor.csv]
-Se conserva el análisis existente, incluido el promedio auxiliar de A1(b).
-"""
+# Parte A, ejercicio 1: datos experimentales, transitorios y recta de régimen.
 from pathlib import Path
 import sys
 import json
@@ -15,7 +11,7 @@ from scipy.optimize import least_squares
 RAIZ = Path(__file__).resolve().parent.parent
 CARPETA_RESULTADOS = Path(__file__).resolve().parent / 'resultados'
 
-# La configuración se toma del archivo de la cátedra, sin duplicarla.
+# La configuración se toma del archivo de la cátedra, sin duplicarla
 sys.path.insert(0, str(RAIZ / 'consigna'))
 from script_identificacion import (DT, VENTANA_S, DUTY_REFERENCIA, DURACION_CICLO_S, CICLOS_AJUSTE)
 
@@ -81,10 +77,9 @@ def ejercicio_1(tiempo, duty, velocidad, carpeta_fig):
     resultados['cantidad_tramos'] = len(tramos)
     resultados['duracion_tramo_s'] = [float(duraciones.min()), float(duraciones.max())]
     resultados['niveles_duty'] = [float(v) for v in niveles]
-    # Resolucion de 8 bits del PWM: duty = entero/255.
     resultados['niveles_duty_x255'] = [float(v * 255) for v in niveles]
 
-    # (a) Ensayo completo: entrada y velocidad.
+    # (a)Ensayo completo: entrada y velocidad.
     fig, ejes = plt.subplots(2, 1, figsize=(7.2, 4.2), sharex=True,
                              gridspec_kw={'height_ratios': [2.2, 1]})
     ejes[0].plot(tiempo, velocidad, lw=0.4, color='C0')
@@ -99,8 +94,7 @@ def ejercicio_1(tiempo, duty, velocidad, carpeta_fig):
     ejes[0].set_ylim(5, 58)
     guardar(fig, carpeta_fig, 'fig_A1a_ensayo_completo')
 
-    # (a) Detalle de un ciclo. Se elige el ciclo 2 (36 s a 72 s) para que el
-    # primer tramo no contenga el arranque del registro.
+    # (a)Detalle de un ciclo. Se elige el ciclo 2 (36 s a 72 s) para que el primer tramo no contenga el arranque del registro.
     inicio, fin = int(round(DURACION_CICLO_S / DT)), int(round(2 * DURACION_CICLO_S / DT))
     fig, ejes = plt.subplots(2, 1, figsize=(3.5, 3.0), sharex=True,
                              gridspec_kw={'height_ratios': [2.2, 1]})
@@ -111,18 +105,15 @@ def ejercicio_1(tiempo, duty, velocidad, carpeta_fig):
     ejes[1].set_xlabel('Tiempo [s]')
     guardar(fig, carpeta_fig, 'fig_A1a_un_ciclo')
 
-    # (c) Velocidad de regimen: promedio del ultimo segundo de cada tramo.
+    # (c)Velocidad de regimen: promedio del ultimo segundo de cada tramo.
     n_reg = int(round(TIEMPO_REGIMEN_S / DT))
     d_tramo = np.array([duty[i] for i, f in tramos])
     w_ss = np.array([velocidad[f - n_reg:f].mean() for i, f in tramos])
     ciclo = np.arange(len(tramos)) // 6 + 1
 
-    # (b) Respuesta a los escalones. Para cada cambio de duty se normaliza la
-    # velocidad entre el regimen anterior y el nuevo: y = (w - w0)/(w1 - w0).
-    # Luego se ajusta una constante de tiempo tau de un primer orden, pasado
-    # por el MISMO promedio movil de 0.1 s que tienen los datos.
+    # (b)Respuesta a los escalones. Para cada cambio de duty se normaliza la velocidad entre el regimen anterior y el nuevo: y = (w - w0)/(w1 - w0). Despues ajuste una constante de tiempo tau de un primer orden, pasado por el MISMO promedio movil de 0.1 s que tienen los datos.
     n_esc = int(round(VENTANA_ESCALON_S / DT))
-    t_rel = np.arange(-N_VENTANA, n_esc) * DT       # Incluye 0.1 s previos para el MA
+    t_rel = np.arange(-N_VENTANA, n_esc) * DT     
     normalizadas, taus, t63s, subida = [], [], [], []
     for j in range(1, len(tramos)):
         k0 = tramos[j][0]
@@ -144,7 +135,7 @@ def ejercicio_1(tiempo, duty, velocidad, carpeta_fig):
         tau_subida_media_s=float(taus[subida].mean()), tau_bajada_media_s=float(taus[~subida].mean()),
         p_preliminar_1_s=float(1 / tau_med))
 
-    # Rizado en regimen: frecuencia dominante frente a la frecuencia de giro.
+    # frecuencia dominante frente a la frecuencia de giro.
     rizado = []
     for i, f in tramos[6:12]:
         s = velocidad[i + 1000:f]
@@ -188,7 +179,7 @@ def ejercicio_1(tiempo, duty, velocidad, carpeta_fig):
     fig.tight_layout()
     guardar(fig, carpeta_fig, 'fig_A1b_detalle_escalon')
 
-    # (c) Recta de minimos cuadrados omega_ss = m*d + q.
+    # (c)Recta de minimos cuadrados omega_ss = m*d + q.
     m, q = np.polyfit(d_tramo, w_ss, 1)
     residuos = w_ss - (m * d_tramo + q)
     r2 = 1 - np.sum(residuos**2) / np.sum((w_ss - w_ss.mean())**2)
@@ -198,7 +189,6 @@ def ejercicio_1(tiempo, duty, velocidad, carpeta_fig):
         por_nivel.append(dict(duty=float(nivel), w_ss_media=float(w_ss[sel].mean()),
                               w_ss_desvio=float(w_ss[sel].std(ddof=1)), puntos=int(sel.sum()),
                               residuo_medio=float(residuos[sel].mean())))
-    # Pendientes locales entre niveles consecutivos (para ver curvatura).
     medias = np.array([p['w_ss_media'] for p in por_nivel])
     duties = np.array([p['duty'] for p in por_nivel])
     pendientes_locales = np.diff(medias) / np.diff(duties)

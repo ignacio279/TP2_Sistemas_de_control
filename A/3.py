@@ -1,8 +1,5 @@
-"""Parte A, ejercicio 3: Euler hacia adelante y su verificación.
-A3(a-b): se completó calcular_velocidad en consigna/script_identificacion.py.
-Aquí se importa esa función y se realiza únicamente la verificación de A3(c).
-Ejecutar desde la raíz del repo: python A/3.py
-"""
+# Parte A, ejercicio 3: Euler hacia adelante y su verificación.
+# A3(a-b): se completó calcular_velocidad en consigna/script_identificacion.py. Aca se importa esa función y se realiza únicamente la verificación de A3(c).
 from pathlib import Path
 import sys
 import json
@@ -14,9 +11,9 @@ import matplotlib.pyplot as plt
 RAIZ = Path(__file__).resolve().parent.parent
 CARPETA_RESULTADOS = Path(__file__).resolve().parent / 'resultados'
 
-# La configuración se toma del archivo de la cátedra, sin duplicarla.
+# La configuracion se toma del archivo de la catedra, sin duplicarla
 sys.path.insert(0, str(RAIZ / 'consigna'))
-# A3(a-b) se completó allí; aquí se importa Euler para verificar A3(c).
+# A3(a-b) se completo ahi, aca se importa Euler para verificar A3(c)
 from script_identificacion import (calcular_velocidad, DT, DUTY_REFERENCIA)
 
 plt.rcParams.update({'font.size': 9, 'axes.grid': True, 'grid.alpha': 0.35,
@@ -46,16 +43,16 @@ def guardar(fig, carpeta, nombre):
 
 
 def ejercicio_3(carpeta_fig):
-    Kdc, omega_ref, p = 240.0, 30.0, 8.0          # Parametros de prueba del enunciado
+    Kdc, omega_ref, p = 240.0, 30.0, 8.0         
     d_cte, w0, duracion = 0.70, 30.0, 2.0
     n = int(round(duracion / DT))
     t = np.arange(n) * DT
     duty = np.full(n, d_cte)
     w_euler = calcular_velocidad([Kdc, omega_ref, p], duty, w0)
 
-    # Equilibrio analitico: w* = w_ref + Kdc (d - d_ref).
+    # Equilibrio analitico: w* = w_ref + Kdc (d - d_ref)
     w_eq = omega_ref + Kdc * (d_cte - DUTY_REFERENCIA)
-    # Solucion exacta de la EDO lineal de primer orden con entrada constante.
+    # Solucion exacta de la EDO lineal de primer orden con entrada constante!
     w_exacta = w_eq + (w0 - w_eq) * np.exp(-p * t)
 
     resultados = dict(w_equilibrio_analitico=w_eq, w_euler_final=float(w_euler[-1]),

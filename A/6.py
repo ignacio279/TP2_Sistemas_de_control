@@ -5,7 +5,7 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Letra grande y en negrita para que las figuras se lean bien en el informe
+# letra grande y en negrita para que las figuras se lean bien en el informe!
 plt.rcParams.update({'font.size': 13, 'font.weight': 'bold', 'axes.labelweight': 'bold',
                      'axes.titleweight': 'bold', 'axes.linewidth': 1.5})
 

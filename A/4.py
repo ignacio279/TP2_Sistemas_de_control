@@ -1,4 +1,4 @@
-
+# Parte A - Ejercicio 4
 import os
 import sys
 import numpy as np

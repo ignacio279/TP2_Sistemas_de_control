@@ -1,5 +1,5 @@
 # Parte B - Ejercicio 1: representacion del sistema y controlabilidad
-# Ejecutar A/5.py primero. Luego: python B/1.py
+# Se necesita tener ejecutado A/5.py primero !!
 # La deduccion de las matrices y el rango se desarrollan en el informe!
 # Este script solo evalua las matrices con los parametros identificados
 import os
@@ -12,7 +12,7 @@ parametros = np.loadtxt(os.path.join(carpeta, '..', 'A', 'resultados', '5',
 Kdc, omega_ref, p = parametros
 b = p * Kdc
 
-# (a) Matrices del modelo, su deduccion se desarrolla en el informe!!
+# (a)Matrices del modelo, su deduccion se desarrolla en el informe!!
 # x = [Delta(theta), Delta(omega)]^T, u = Delta(d), y = Delta(theta)
 # Se calcula en radianes, rad/s y duty (adimensional), respectivamente
 
@@ -35,7 +35,6 @@ print('D =\n', D)
 Cmat = ctrl.ctrb(A, B)
 print('Matriz de controlabilidad =\n', Cmat)
 
-# Guardado con la misma estructura de la Parte A.
 os.makedirs(os.path.join(carpeta, 'resultados', '1'), exist_ok=True)
 np.savetxt(os.path.join(carpeta, 'resultados', '1', 'A.txt'), A)
 np.savetxt(os.path.join(carpeta, 'resultados', '1', 'B.txt'), B)

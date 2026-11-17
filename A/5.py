@@ -1,5 +1,4 @@
 # Parte A - Ejercicio 5: Estimacion de parametros por minimos cuadrados no lineales (NLS)
-# Ejecutar desde la carpeta del TP: python A/5.py
 import os
 import sys
 import numpy as np

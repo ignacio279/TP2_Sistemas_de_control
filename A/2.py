@@ -1,9 +1,4 @@
-"""Parte A, ejercicio 2: comprobaciones numéricas del modelo propuesto.
-Las comprobaciones de A2 son externas al script de identificación y quedan aquí.
-El desarrollo analítico sigue correspondiendo al informe.
-Ejecutar primero A/1.py y luego: python A/2.py
-Los valores preliminares de este ejercicio no reemplazan la identificación de A5.
-"""
+#Parte A, ejercicio 2: comprobaciones numéricas del modelo propuesto.
 from pathlib import Path
 import sys
 import json
@@ -11,7 +6,7 @@ import json
 RAIZ = Path(__file__).resolve().parent.parent
 CARPETA_RESULTADOS = Path(__file__).resolve().parent / 'resultados'
 
-# La configuración se toma del archivo de la cátedra, sin duplicarla.
+# La configuración se toma del archivo de la cátedra, sin duplicarla
 sys.path.insert(0, str(RAIZ / 'consigna'))
 from script_identificacion import (DUTY_REFERENCIA)
 
@@ -32,8 +27,7 @@ def guardar_resultados(numero, nombre, resultados):
 
 
 def ejercicio_2(resultados_1):
-    # En equilibrio el modelo predice w* = w_ref + Kdc (d - d_ref) = Kdc d + (w_ref - Kdc d_ref),
-    # por lo que Kdc ~ m y w_ref ~ m d_ref + q. Con p ~ 1/tau se obtienen b = p Kdc y c = p q.
+    # en equilibrio el modelo predice w* = w_ref + Kdc (d - d_ref) = Kdc d + (w_ref - Kdc d_ref), por lo que Kdc similar a m y w_ref similar a m d_ref + q. Con p similar a 1/tau se obtienen b = p Kdc y c = p q
     m, q = resultados_1['recta']['m'], resultados_1['recta']['q']
     p = resultados_1['escalones']['p_preliminar_1_s']
     Kdc, omega_ref = m, m * DUTY_REFERENCIA + q
