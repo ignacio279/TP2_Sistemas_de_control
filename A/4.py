@@ -30,6 +30,8 @@ print("Salida en k = 299:", y[299], "(promedio de 201..300 = 250.5)")
 print("Maxima diferencia con el calculo directo:", np.max(np.abs(y - y_directo)))
 
 
+# Prueba extra con la exponencial que vimos en clase para ver como el promedio movil cambia el transitorio
+# elegimos tau = 0.11 para esta ilustracion
 t = np.arange(0, 1.5, DT)
 tau = 0.11
 w = np.where(t >= 0.5, 1 - np.exp(-(t - 0.5) / tau), 0.0)
