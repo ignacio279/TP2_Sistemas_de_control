@@ -88,8 +88,8 @@ def ejercicio_1(tiempo, duty, velocidad, carpeta_fig):
     ejes[0].set_ylim(5, 58)
     guardar(fig, carpeta_fig, 'fig_A1a_ensayo_completo')
 
-    # (a)Detalle de un ciclo. Se elige el ciclo 2 (36 s a 72 s) para que el primer tramo no contenga el arranque del registro.
-    inicio, fin = int(round(DURACION_CICLO_S / DT)), int(round(2 * DURACION_CICLO_S / DT))
+    # (a)Ciclo 2: usamos sus seis tramos completos y evitamos el arranque del registro
+    inicio, fin = tramos[6][0], tramos[11][1]
     fig, ejes = plt.subplots(2, 1, figsize=(3.5, 3.0), sharex=True,
                              gridspec_kw={'height_ratios': [2.2, 1]})
     ejes[0].plot(tiempo[inicio:fin], velocidad[inicio:fin], lw=0.6)
