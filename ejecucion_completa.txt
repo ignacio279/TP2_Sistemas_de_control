@@ -1,0 +1,297 @@
+Python 3.11.8
+numpy 1.26.4
+scipy 1.17.1
+matplotlib 3.10.1
+control 0.10.2
+
+--- A/1.py ---
+/Users/athinasalim/.matplotlib is not a writable directory
+Matplotlib created a temporary cache directory at /var/folders/6y/f0qlfq094gx2tt5rz2y_xphm0000gn/T/matplotlib-uyxlhwfp because there was an issue with the default path (/Users/athinasalim/.matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+Matplotlib is building the font cache; this may take a moment.
+{
+  "cantidad_tramos": 60,
+  "duracion_tramo_s": [
+    6.001,
+    6.001
+  ],
+  "niveles_duty": [
+    0.6,
+    0.65098,
+    0.701961,
+    0.74902
+  ],
+  "niveles_duty_x255": [
+    153.0,
+    165.9999,
+    179.00005499999997,
+    191.0001
+  ],
+  "escalones": {
+    "t63_crudo_media_s": 0.15822033898305085,
+    "tau_mediana_s": 0.10994043555313465,
+    "tau_media_s": 0.10802853165073036,
+    "tau_desvio_s": 0.02799012217760585,
+    "tau_subida_media_s": 0.08197134126038003,
+    "tau_bajada_media_s": 0.13321714902806903,
+    "p_preliminar_1_s": 9.095834439519717
+  },
+  "recta": {
+    "m": 245.91548775170494,
+    "q": -134.8625056650832,
+    "R2": 0.9962709559632141,
+    "rmse": 0.7191180191585235,
+    "max_abs_residuo": 1.4952223503648483,
+    "duty_velocidad_nula": 0.5484099716454244,
+    "omega_en_dref": 31.130448567317643,
+    "por_nivel": [
+      {
+        "duty": 0.6,
+        "w_ss_media": 13.049257285537758,
+        "w_ss_desvio": 0.772693912758728,
+        "puntos": 10,
+        "residuo_medio": 0.3624702995979973
+      },
+      {
+        "duty": 0.65098,
+        "w_ss_media": 25.012329668078372,
+        "w_ss_desvio": 0.6622761351926449,
+        "puntos": 20,
+        "residuo_medio": -0.2113253208895003
+      },
+      {
+        "duty": 0.701961,
+        "w_ss_media": 37.626872769492316,
+        "w_ss_desvio": 0.7056266739662886,
+        "puntos": 20,
+        "residuo_medio": -0.13365022250361988
+      },
+      {
+        "duty": 0.74902,
+        "w_ss_media": 49.660497320441245,
+        "w_ss_desvio": 0.685061742172789,
+        "puntos": 10,
+        "residuo_medio": 0.32748078718859686
+      }
+    ],
+    "pendientes_locales": [
+      234.66207105807393,
+      247.4361644811588,
+      255.71356278180392
+    ],
+    "w_ss_media_por_ciclo": [
+      30.311387670365736,
+      30.431664004599735,
+      30.870936854719428,
+      30.921342278910643,
+      31.277842146362,
+      31.504354213069274,
+      31.669703721028316,
+      31.871268419281805,
+      32.169729062368546,
+      32.28537076449514
+    ]
+  }
+}
+Resultados en: /private/var/folders/6y/f0qlfq094gx2tt5rz2y_xphm0000gn/T/tp2_corrida_completa_3voedwqf/A/resultados/1/resultados_A1.json
+
+Codigo de salida: 0
+
+--- A/2.py ---
+
+Codigo de salida: 0
+
+--- A/3.py ---
+/Users/athinasalim/.matplotlib is not a writable directory
+Matplotlib created a temporary cache directory at /var/folders/6y/f0qlfq094gx2tt5rz2y_xphm0000gn/T/matplotlib-bxsvpu38 because there was an issue with the default path (/Users/athinasalim/.matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+Matplotlib is building the font cache; this may take a moment.
+{
+  "w_equilibrio_analitico": 35.99999999999998,
+  "t_final_s": 2.0,
+  "w_euler_final": 35.999999366866085,
+  "error_final": -6.331338937570763e-07,
+  "max_error_euler_vs_exacta": 0.008858655196377185,
+  "tau_s": 0.125,
+  "t_establecimiento_aprox_s": 0.5,
+  "factor_euler": 0.992,
+  "factor_exacto": 0.9920319148370607
+}
+Resultados en: /private/var/folders/6y/f0qlfq094gx2tt5rz2y_xphm0000gn/T/tp2_corrida_completa_3voedwqf/A/resultados/3/resultados_A3.json
+
+Codigo de salida: 0
+
+--- A/4.py ---
+/Users/athinasalim/.matplotlib is not a writable directory
+Matplotlib created a temporary cache directory at /var/folders/6y/f0qlfq094gx2tt5rz2y_xphm0000gn/T/matplotlib-6676fwc8 because there was an issue with the default path (/Users/athinasalim/.matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+Matplotlib is building the font cache; this may take a moment.
+/private/var/folders/6y/f0qlfq094gx2tt5rz2y_xphm0000gn/T/tp2_corrida_completa_3voedwqf/A/4.py:57: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+Ts = 0.001 s ; Tv = 0.1 s
+N = Tv / Ts = 100.0 -> 100 muestras
+Largo de entrada y salida: 300 300
+Primeras salidas (ventana creciente): [1.  1.5 2.  2.5]
+Salida en k = 299: 250.5 (promedio de 201..300 = 250.5)
+Maxima diferencia con el calculo directo: 0.0
+t63 sin promedio: 0.11 s ; con promedio: 0.164 s
+
+Codigo de salida: 0
+
+--- A/5.py ---
+/Users/athinasalim/.matplotlib is not a writable directory
+Matplotlib created a temporary cache directory at /var/folders/6y/f0qlfq094gx2tt5rz2y_xphm0000gn/T/matplotlib-tq0xl_lh because there was an issue with the default path (/Users/athinasalim/.matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+Matplotlib is building the font cache; this may take a moment.
+N = 100 muestras. Estimando Kdc, omega_ref y p ...
+Convergio: True - `ftol` termination condition is satisfied.
+
+Parametros identificados:
+Kdc       = 244.904 (rad/s)/duty
+omega_ref = 30.808 rad/s
+p         = 8.989 1/s   (tau = 1/p = 111.2 ms)
+b = p*Kdc                     = 2201.55 rad/s^2
+c = p*(omega_ref - Kdc*d_ref) = -1209.1 rad/s^2
+J (suma de residuos^2)        = 150419.7 con 251000 muestras
+RMS de los residuos           = 0.774 rad/s
+
+Modelo identificado:
+dw/dt + 8.989 w = 2201.55 d + (-1209.10)
+
+Funcion de transferencia G(s) = dW(s)/dD(s):
+G(s) = 2201.55 / (s + 8.989)
+Polo: [-8.98945723] 1/s ; ganancia estatica G(0) = 244.904 = Kdc
+
+Codigo de salida: 0
+
+--- A/6.py ---
+/Users/athinasalim/.matplotlib is not a writable directory
+Matplotlib created a temporary cache directory at /var/folders/6y/f0qlfq094gx2tt5rz2y_xphm0000gn/T/matplotlib-y4516qex because there was an issue with the default path (/Users/athinasalim/.matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+Matplotlib is building the font cache; this may take a moment.
+/private/var/folders/6y/f0qlfq094gx2tt5rz2y_xphm0000gn/T/tp2_corrida_completa_3voedwqf/A/6.py:101: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+Kdc, omega_ref, p = [244.90355473  30.80784289   8.98945723]
+
+Ajuste (1 s a 252 s, 251000 muestras)
+  RMSE  = 0.774 rad/s
+  Sesgo = 0.000 rad/s
+  FIT   = 93.37 %
+  Error maximo = 3.321 rad/s
+
+Validacion (252 s a 360 s, 108060 muestras)
+  RMSE  = 1.289 rad/s
+  Sesgo = 1.128 rad/s
+  FIT   = 88.95 %
+  Error maximo = 3.882 rad/s
+
+Codigo de salida: 0
+
+--- B/1.py ---
+/Users/athinasalim/.matplotlib is not a writable directory
+Matplotlib created a temporary cache directory at /var/folders/6y/f0qlfq094gx2tt5rz2y_xphm0000gn/T/matplotlib-a72jpq5p because there was an issue with the default path (/Users/athinasalim/.matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+Matplotlib is building the font cache; this may take a moment.
+Kdc, omega_ref, p = [244.90355473  30.80784289   8.98945723]
+b = p*Kdc = 2201.5500296164646
+A =
+ [[ 0.          1.        ]
+ [ 0.         -8.98945723]]
+B =
+ [[   0.        ]
+ [2201.55002962]]
+C =
+ [[1 0]]
+D =
+ [[0]]
+Matriz de controlabilidad =
+ [[     0.           2201.55002962]
+ [  2201.55002962 -19790.73982138]]
+
+Codigo de salida: 0
+
+--- B/2.py ---
+/Users/athinasalim/.matplotlib is not a writable directory
+Matplotlib created a temporary cache directory at /var/folders/6y/f0qlfq094gx2tt5rz2y_xphm0000gn/T/matplotlib-fojel1b0 because there was an issue with the default path (/Users/athinasalim/.matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+Matplotlib is building the font cache; this may take a moment.
+/private/var/folders/6y/f0qlfq094gx2tt5rz2y_xphm0000gn/T/tp2_corrida_completa_3voedwqf/B/2.py:90: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+KL = [[ 0.00022711 -0.0034019 ]]
+Polos solicitados = [-0.5, -1]
+Polos de A-B@KL = [-0.5 -1. ]
+
+Codigo de salida: 0
+
+--- B/3.py ---
+/Users/athinasalim/.matplotlib is not a writable directory
+Matplotlib created a temporary cache directory at /var/folders/6y/f0qlfq094gx2tt5rz2y_xphm0000gn/T/matplotlib-i0zp_ji5 because there was an issue with the default path (/Users/athinasalim/.matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+Matplotlib is building the font cache; this may take a moment.
+/private/var/folders/6y/f0qlfq094gx2tt5rz2y_xphm0000gn/T/tp2_corrida_completa_3voedwqf/B/3.py:119: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+KR = [[0.01453521 0.00136747]]
+Polos solicitados = [-4, -8]
+Polos de A-B@KR = [-4. -8.]
+
+Codigo de salida: 0
+
+--- B/4.py ---
+/Users/athinasalim/.matplotlib is not a writable directory
+Matplotlib created a temporary cache directory at /var/folders/6y/f0qlfq094gx2tt5rz2y_xphm0000gn/T/matplotlib-78780mcg because there was an issue with the default path (/Users/athinasalim/.matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+Matplotlib is building the font cache; this may take a moment.
+/private/var/folders/6y/f0qlfq094gx2tt5rz2y_xphm0000gn/T/tp2_corrida_completa_3voedwqf/B/4.py:134: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+KL = [[ 0.00022711 -0.0034019 ]]
+KR = [[0.01453521 0.00136747]]
+Polos de A-B@KL = [-0.5 -1. ]
+Polos de A-B@KR = [-4. -8.]
+Resultados guardados en: /private/var/folders/6y/f0qlfq094gx2tt5rz2y_xphm0000gn/T/tp2_corrida_completa_3voedwqf/B/resultados/4
+
+Codigo de salida: 0
+
+--- B/5.py ---
+/Users/athinasalim/.matplotlib is not a writable directory
+Matplotlib created a temporary cache directory at /var/folders/6y/f0qlfq094gx2tt5rz2y_xphm0000gn/T/matplotlib-5rcemino because there was an issue with the default path (/Users/athinasalim/.matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+Matplotlib is building the font cache; this may take a moment.
+/private/var/folders/6y/f0qlfq094gx2tt5rz2y_xphm0000gn/T/tp2_corrida_completa_3voedwqf/B/5.py:221: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+KR = [[0.01453521 0.00136747]]
+L = [[ 51.01054277]
+ [341.44290767]]
+Polos de A-B@KR = [-4. -8.]
+Polos de A-L@C = [-40. -20.]
+Control inicial [variacion de duty] = 0.0007610620060296564
+Posicion final [grados] = 4.999998959524923
+Error final de estimacion [rad, rad/s] = [3.95743716e-11 4.35735301e-10]
+Resultados guardados en: /private/var/folders/6y/f0qlfq094gx2tt5rz2y_xphm0000gn/T/tp2_corrida_completa_3voedwqf/B/resultados/5
+Error de posicion a 0.5 s [grados] = 4.998146520916555e-05
+Error de velocidad a 0.5 s [rad/s] = 2.705400390669299e-05
+Control inicial con estados reales [variacion de duty] = 0.0012684366767160941
+Maxima diferencia de posicion entre casos [grados] = 0.11111118958306455 en t [s] = 0.299
+Maximo absoluto del control con observador [variacion de duty] = 0.0012950817546084604 en t [s] = 0.037
+
+Codigo de salida: 0
+
+--- B/6.py ---
+/Users/athinasalim/.matplotlib is not a writable directory
+Matplotlib created a temporary cache directory at /var/folders/6y/f0qlfq094gx2tt5rz2y_xphm0000gn/T/matplotlib-sa7tbypp because there was an issue with the default path (/Users/athinasalim/.matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+Matplotlib is building the font cache; this may take a moment.
+/private/var/folders/6y/f0qlfq094gx2tt5rz2y_xphm0000gn/T/tp2_corrida_completa_3voedwqf/B/6.py:245: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+R1
+K_a = [[ 1.73250972  0.99671173 -1.        ]]
+Polos de A_a-B_a@K_a = [-2.20156816e+03+0.j         -8.66020621e-01+0.50000005j
+ -8.66020621e-01-0.50000005j]
+Ganancia integral (tercera componente, u=-K_a*z) = -0.9999999999999908
+R100
+K_a = [[ 0.17370585  0.09678537 -0.1       ]]
+Polos de A_a-B_a@K_a = [-220.33619161+0.j           -0.86554763+0.50000497j
+   -0.86554763-0.50000497j]
+Ganancia integral (tercera componente, u=-K_a*z) = -0.1000000000000002
+Resultados guardados en: /private/var/folders/6y/f0qlfq094gx2tt5rz2y_xphm0000gn/T/tp2_corrida_completa_3voedwqf/B/resultados/6
+R1 control inicial [variacion de duty] = 0.151189994958812
+R1 maxima posicion [grados] = 5.8158103648456745
+R1 posicion a 20 s [grados] = 4.999999984564813
+R100 control inicial [variacion de duty] = 0.015158694879179226
+R100 maxima posicion [grados] = 5.821716838468202
+R100 posicion a 20 s [grados] = 4.999999984328443
+LQI_R1: ts=5.17275116 s, e_ss=0.0 rad, max|u|=1.5118999496e-01, Eu(0,20)=5.3357092211e-06, t_max|u|=0.00000000 s, e(20)=2.693948e-10 rad
+LQI_R100: ts=5.18088066 s, e_ss=0.0 rad, max|u|=1.5158694879e-02, Eu(0,20)=6.6542881907e-07, t_max|u|=0.00000000 s, e(20)=2.735203e-10 rad
+Rapido_B4: ts=1.15003306 s, e_ss=0.0 rad, max|u|=1.2684366767e-03, Eu(0,20)=2.3633349364e-07, t_max|u|=0.00000000 s, e(20)=3.203721e-15 rad
+
+Codigo de salida: 0
+
+Completados sin errores: 12/12
