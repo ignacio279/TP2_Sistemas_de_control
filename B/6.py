@@ -1,14 +1,16 @@
 # Parte B - Ejercicio 6(b)-(d): diseno, simulacion e indicadores de control
 # Se debe tener ejecutado A/5.py primero para tener los parametros identificados.
 # Formulacion: Teorica 16, Control y Estimacion Optima, paginas 18-19.
+# Simulacion: Guia 9, ejemplo 4, paginas 4-5 (solve_ivp y tolerancias).
+# Indicadores: implementacion de las definiciones del TP con las muestras.
+# Las guias revisadas no incluyen un bloque de calculo de estos indicadores.
 # Se usa el vector del TP z=[theta-r, omega, xi], con xi_dot=r-theta.
 # Para referencia constante y t>0: z_dot=A_a*z+B_a*u, u=-K_a*z.
 import os
 import numpy as np
 import control as ctrl
 import matplotlib.pyplot as plt
-from scipy.integrate import solve_ivp, quad
-from scipy.optimize import brentq
+from scipy.integrate import solve_ivp
 
 plt.rcParams.update({'font.size': 13})
 
@@ -26,6 +28,8 @@ B_a = np.array([[0],
 Q = np.diag([1.0, 1.0, 1.0])
 
 # ctrl.lqr aplicado al sistema aumentado realiza el diseno LQI.
+# Esta llamada no figura en las guias revisadas: implementa numericamente
+# la ecuacion de Riccati de la Teorica 16. Corresponde al inciso (b).
 # Resuelve A_a.T*P+P*A_a-P*B_a*R^(-1)*B_a.T*P+Q=0
 # y devuelve K_a=R^(-1)*B_a.T*P, P y los polos de A_a-B_a*K_a.
 # No se reutiliza KR de B3: se calculan nuevas ganancias optimas.
@@ -79,14 +83,13 @@ def closed_loop_R100(t, z):
     return A_cl_100 @ z
 
 
-# Radau permite integrar eficientemente las escalas rapida y lenta del LQI.
-# Se mantienen las tolerancias de B4 y B5; el paso interno es adaptativo.
-sol_1 = solve_ivp(closed_loop_R1, [t0, tf], z0, method='Radau',
-                  jac=A_cl_1, t_eval=t_eval, dense_output=True,
-                  rtol=1e-9, atol=1e-9)
-sol_100 = solve_ivp(closed_loop_R100, [t0, tf], z0, method='Radau',
-                    jac=A_cl_100, t_eval=t_eval, dense_output=True,
-                    rtol=1e-9, atol=1e-9)
+# Misma llamada de solve_ivp que en la Guia 9, ejemplo 4, pagina 5.
+# Se conservan su metodo predeterminado y tolerancias; el paso interno
+# es adaptativo. La malla de salida mas fina captura el transitorio inicial.
+sol_1 = solve_ivp(closed_loop_R1, [t0, tf],
+                  z0, t_eval=t_eval, rtol=1e-9, atol=1e-9)
+sol_100 = solve_ivp(closed_loop_R100, [t0, tf],
+                    z0, t_eval=t_eval, rtol=1e-9, atol=1e-9)
 if not sol_1.success or not sol_100.success:
     raise RuntimeError(f'Error de integracion: R1={sol_1.message}; R100={sol_100.message}')
 
@@ -165,9 +168,8 @@ def closed_loop_rapido(t, z):
     return A_cl_R @ z
 
 
-sol_R = solve_ivp(closed_loop_rapido, [t0, tf], z0_R, method='Radau',
-                  jac=A_cl_R, t_eval=t_eval, dense_output=True,
-                  rtol=1e-9, atol=1e-9)
+sol_R = solve_ivp(closed_loop_rapido, [t0, tf],
+                  z0_R, t_eval=t_eval, rtol=1e-9, atol=1e-9)
 if not sol_R.success:
     raise RuntimeError(f'Error de integracion del controlador rapido: {sol_R.message}')
 theta_R = sol_R.y[0, :] + r
@@ -179,43 +181,45 @@ np.savetxt(os.path.join(salida, 'respuesta_rapido.txt'),
 
 
 def calcular_indicadores(sol, A_cl, K):
-    # La primera coordenada siempre es theta-r. El criterio es |error|<=0.02*r0.
-    # Se localiza el ULTIMO ingreso a la banda, porque los LQI tienen sobrepico.
+    # Desarrollo propio de las definiciones de B6(d), usando arreglos y bucles.
+    # No se atribuye a las guias una rutina de indicadores que no contienen.
+    tiempos = sol.t
+    error = -sol.y[0, :]  # La primera coordenada es theta-r.
+    control = (-K @ sol.y)[0, :]
+
+    # Se recorre toda la respuesta para encontrar la ULTIMA muestra fuera
+    # de la banda: el primer ingreso no basta porque los LQI tienen sobrepico.
+    # ts es la muestra siguiente; su resolucion aqui es de 1 ms.
     tolerancia = 0.02 * abs(r0)
-    fuera = np.flatnonzero(np.abs(sol.y[0, :]) > tolerancia)
-    if len(fuera) == 0:
-        ts = t0
-    elif fuera[-1] == len(sol.t) - 1:
+    ultimo_fuera = -1
+    for i in range(len(tiempos)):
+        if abs(error[i]) > tolerancia:
+            ultimo_fuera = i
+    if ultimo_fuera == -1:
+        ts = tiempos[0]
+    elif ultimo_fuera == len(tiempos) - 1:
         ts = np.nan  # No se establece dentro del horizonte simulado.
     else:
-        i = fuera[-1]
-        ts = brentq(lambda tiempo: abs(sol.sol(tiempo)[0]) - tolerancia,
-                    sol.t[i], sol.t[i + 1], xtol=1e-12)
+        ts = tiempos[ultimo_fuera + 1]
 
-    # Se comparan los extremos del intervalo y los extremos interiores de u.
-    # u_dot=-K*A_cl*z; las raices se refinan usando la solucion continua.
-    derivada = (-K @ A_cl @ sol.y)[0, :]
-    cruces = np.flatnonzero(((derivada[:-1] < 0) & (derivada[1:] > 0)) |
-                           ((derivada[:-1] > 0) & (derivada[1:] < 0)))
-    candidatos = [t0, tf]
-    for i in cruces:
-        candidatos.append(brentq(
-            lambda tiempo: (-K @ A_cl @ sol.sol(tiempo)).item(),
-            sol.t[i], sol.t[i + 1], xtol=1e-12))
-    candidatos.extend(sol.t[derivada == 0].tolist())
-    controles = np.array([abs((-K @ sol.sol(tiempo)).item())
-                          for tiempo in candidatos])
-    indice = np.argmax(controles)
-    umax = controles[indice]
-    t_umax = candidatos[indice]
+    # Maximo absoluto entre las muestras, incluyendo t=0 y t=20.
+    # Para estos tres casos el maximo ocurre en t=0 y queda incluido exactamente.
+    umax = abs(control[0])
+    t_umax = tiempos[0]
+    for i in range(1, len(tiempos)):
+        if abs(control[i]) > umax:
+            umax = abs(control[i])
+            t_umax = tiempos[i]
 
     # La consigna dice '10 segundos' en el texto, pero muestra integral de 0 a 20.
     # Se adopta [0,20] conforme a la formula y al horizonte de simulacion.
-    # La cuadratura adaptativa se separa en intervalos para captar el pico rapido.
-    limites = [0.0, 0.005, 0.05, 0.5, 5.0, 20.0]
-    Eu = sum(quad(lambda tiempo: (-K @ sol.sol(tiempo)).item() ** 2,
-                  inicio, fin, epsabs=1e-13, epsrel=1e-9, limit=200)[0]
-             for inicio, fin in zip(limites[:-1], limites[1:]))
+    # Aproximacion por suma de trapecios de u^2 entre muestras consecutivas:
+    # Eu = sum((u[i]^2 + u[i+1]^2) * (t[i+1]-t[i]) / 2).
+    # Se usa cada intervalo real porque la malla no es uniforme.
+    Eu = 0.0
+    for i in range(len(tiempos) - 1):
+        dt = tiempos[i + 1] - tiempos[i]
+        Eu += (control[i] ** 2 + control[i + 1] ** 2) * dt / 2
 
     # Para los tres sistemas autonomos estables, z_ss=0 y theta_ss=r0.
     # Se distingue el error estacionario analitico del error numerico a los 20 s.
@@ -233,13 +237,14 @@ for nombre, sol, A_cl, K in [('LQI_R1', sol_1, A_cl_1, K_1),
     valores = calcular_indicadores(sol, A_cl, K)
     indicadores.append(valores)
     ts, e_ss, umax, Eu, t_umax, e_final = valores
-    print(f'{nombre}: ts={ts:.8f} s, e_ss={e_ss:.1f} rad, '
+    print(f'{nombre}: ts={ts:.3f} s (resolucion 1 ms), e_ss={e_ss:.1f} rad, '
           f'max|u|={umax:.10e}, Eu(0,20)={Eu:.10e}, '
           f't_max|u|={t_umax:.8f} s, e(20)={e_final:.6e} rad')
 np.savetxt(os.path.join(salida, 'indicadores.txt'), np.array(indicadores),
            header=('Filas: LQI_R1, LQI_R100, Rapido_B4 (estados reales)\n'
                    'Columnas: ts [s], e_ss [rad], max|u| [variacion de duty], '
                    'Eu integral 0..20 [s], t_max|u| [s], e(20) [rad]\n'
-                   'ts: ultimo ingreso a banda +/-2%; e_ss: limite analitico; '
-                   'Eu: cuadratura adaptativa de u^2 con solucion continua'))
+                   'ts: muestra posterior a la ultima fuera de banda +/-2%, resolucion 1 ms; '
+                   'e_ss: limite analitico; max|u|: maximo entre muestras; '
+                   'Eu: suma de trapecios de u^2 con los intervalos reales'))
 plt.show()
