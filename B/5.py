@@ -1,6 +1,4 @@
 # Parte B - Ejercicio 5(c)-(e): controlador rapido con observador de Luenberger
-# Se debe tener ejecutado A/5.py primero para tener los parametros identificados.
-# Se mantiene el formato de simulacion de B/3.py y B/4.py.
 # Se guardan y grafican los estados reales, estimados y errores de estimacion.
 import os
 import numpy as np
@@ -33,7 +31,7 @@ print('L =', L)
 print('Polos de A-B@KR =', poles_R)
 print('Polos de A-L@C =', poles_o)
 
-# Escalon de 0 a 5 grados aplicado en t=0; calculos en radianes.
+# Escalon de 0 a 5 grados aplicado en t=0. calculos en radianes.
 # La planta parte del origen, pero el observador estima inicialmente 2 grados.
 # z agrupa [theta, omega, theta_estimada, omega_estimada].
 r0 = 5 * np.pi / 180
@@ -60,7 +58,7 @@ def closed_loop_observer(t, z):
 
 
 # Mismo integrador y tolerancias que en B3 y B4.
-# Los tiempos de salida estan separados 1 ms; el paso interno es adaptativo.
+# Los tiempos de salida estan separados 1 ms, el paso interno es adaptativo.
 sol = solve_ivp(closed_loop_observer, [t0, tf],
                 z0, t_eval=t_eval, rtol=1e-9, atol=1e-9)
 if not sol.success:
@@ -125,7 +123,7 @@ plt.legend()
 plt.tight_layout()
 plt.savefig(os.path.join(salida, 'fig_B5_velocidad_estimada.pdf'))
 
-# Error de estimacion = real - estimado; no es el error de seguimiento r-theta.
+# Error de estimacion = real - estimado, no es el error de seguimiento r-theta.
 plt.figure(figsize=(6.5, 4.2))
 plt.plot(t, error_estimacion[0, :] * 180 / np.pi, 'b-', linewidth=2,
          label=r'$\theta-\hat{\theta}$')
@@ -160,7 +158,7 @@ print('Error de velocidad a 0.5 s [rad/s] =',
 # (e) Simulacion independiente con realimentacion de estados reales.
 # Se conservan KR, la referencia, las condiciones iniciales de la planta,
 # los 4 segundos, los tiempos de salida y las tolerancias del caso con observador.
-# No basta con evaluar -KR*x sobre la trayectoria del caso con observador:
+# No basta con evaluar -KR*x sobre la trayectoria del caso con observador
 # al cambiar la entrada de control tambien cambia la trayectoria de la planta.
 A_cl_R = A - B @ KR
 B_r_R = B * KR[0, 0]

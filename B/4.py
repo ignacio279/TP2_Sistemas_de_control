@@ -1,8 +1,6 @@
 # Parte B - Ejercicio 4(c): seguimiento de una referencia angular constante
-# Se debe tener ejecutado A/5.py primero para tener los parametros identificados.
-# Se mantiene el formato de simulacion y graficos de B/2.py y B/3.py.
-# Los incisos (a) y (b) se desarrollan en el informe; las metricas de (d)
-# se calcularan a partir de estas mismas respuestas.
+# Los incisos (a) y (b) se desarrollan en el informe, las metricas de (d)
+# se calculan a partir de estas mismas respuestas.
 import os
 import numpy as np
 import control as ctrl

@@ -1,9 +1,4 @@
 # Parte B - Ejercicio 6(b)-(d): diseno, simulacion e indicadores de control
-# Se debe tener ejecutado A/5.py primero para tener los parametros identificados.
-# Formulacion: Teorica 16, Control y Estimacion Optima, paginas 18-19.
-# Simulacion: Guia 9, ejemplo 4, paginas 4-5 (solve_ivp y tolerancias).
-# Indicadores: implementacion de las definiciones del TP con las muestras.
-# Las guias revisadas no incluyen un bloque de calculo de estos indicadores.
 # Se usa el vector del TP z=[theta-r, omega, xi], con xi_dot=r-theta.
 # Para referencia constante y t>0: z_dot=A_a*z+B_a*u, u=-K_a*z.
 import os
@@ -28,9 +23,7 @@ B_a = np.array([[0],
 Q = np.diag([1.0, 1.0, 1.0])
 
 # ctrl.lqr aplicado al sistema aumentado realiza el diseno LQI.
-# Esta llamada no figura en las guias revisadas: implementa numericamente
-# la ecuacion de Riccati de la Teorica 16. Corresponde al inciso (b).
-# Resuelve A_a.T*P+P*A_a-P*B_a*R^(-1)*B_a.T*P+Q=0
+#implementamos la ecuacion de Riccati de la Teorica 16. Resuelve A_a.T*P+P*A_a-P*B_a*R^(-1)*B_a.T*P+Q=0
 # y devuelve K_a=R^(-1)*B_a.T*P, P y los polos de A_a-B_a*K_a.
 # No se reutiliza KR de B3: se calculan nuevas ganancias optimas.
 R_1 = np.array([[1.0]])
@@ -82,10 +75,6 @@ def closed_loop_R1(t, z):
 def closed_loop_R100(t, z):
     return A_cl_100 @ z
 
-
-# Misma llamada de solve_ivp que en la Guia 9, ejemplo 4, pagina 5.
-# Se conservan su metodo predeterminado y tolerancias; el paso interno
-# es adaptativo. La malla de salida mas fina captura el transitorio inicial.
 sol_1 = solve_ivp(closed_loop_R1, [t0, tf],
                   z0, t_eval=t_eval, rtol=1e-9, atol=1e-9)
 sol_100 = solve_ivp(closed_loop_R100, [t0, tf],
@@ -182,14 +171,10 @@ np.savetxt(os.path.join(salida, 'respuesta_rapido.txt'),
 
 def calcular_indicadores(sol, A_cl, K):
     # Desarrollo propio de las definiciones de B6(d), usando arreglos y bucles.
-    # No se atribuye a las guias una rutina de indicadores que no contienen.
     tiempos = sol.t
     error = -sol.y[0, :]  # La primera coordenada es theta-r.
     control = (-K @ sol.y)[0, :]
 
-    # Se recorre toda la respuesta para encontrar la ULTIMA muestra fuera
-    # de la banda: el primer ingreso no basta porque los LQI tienen sobrepico.
-    # ts es la muestra siguiente; su resolucion aqui es de 1 ms.
     tolerancia = 0.02 * abs(r0)
     ultimo_fuera = -1
     for i in range(len(tiempos)):
@@ -211,7 +196,7 @@ def calcular_indicadores(sol, A_cl, K):
             umax = abs(control[i])
             t_umax = tiempos[i]
 
-    # La consigna dice '10 segundos' en el texto, pero muestra integral de 0 a 20.
+    # POR LAS DUDAS ACLARAMOS: La consigna dice '10 segundos' en el texto, pero muestra integral de 0 a 20.
     # Se adopta [0,20] conforme a la formula y al horizonte de simulacion.
     # Aproximacion por suma de trapecios de u^2 entre muestras consecutivas:
     # Eu = sum((u[i]^2 + u[i+1]^2) * (t[i+1]-t[i]) / 2).
